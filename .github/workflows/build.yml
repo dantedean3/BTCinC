@@ -1,0 +1,32 @@
+name: Daily Blockchain Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  
+  workflow_dispatch:      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install build tools
+      run: sudo apt-get update && sudo apt-get install build-essential -y
+
+    - name: Build blockchain
+      run: |
+        cd blockchain
+        make
+
+    - name: Run blockchain (add new block)
+      run: |
+        cd blockchain
+        ./blockchain
+
+    - name: Commit new chain
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Add new block to chain"
